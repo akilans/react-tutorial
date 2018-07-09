@@ -1,67 +1,100 @@
-// Skill Application
-// babel src/app.js --out-file public/scripts/app.js --presets=env,react --watch
+class SkillApp extends React.Component {
+    render() {
+        const app_name = "Skill Application";
+        const action_name = "Improve your skills";
+        const skills = ["PHP", "PYTHON", "RUBY"];
 
-// Define users
-let user = {
-    name: "Akilan",
-    age: 29,
-    skills: []
-}
-// Select the ID to populate HTML content
-
-let appRoot = document.getElementById("root");
-
-// Add Skill function
-let addSkill = (e) =>{
-    e.preventDefault();
-    let skill = e.target.elements.skill.value;
-
-    if(skill){
-        user.skills.push(skill);
-        e.target.elements.skill.value = "";
-        renderApp();
+        return (
+            <div>
+                <Header app_name={app_name} />
+                <Actions action_name={action_name} />
+                <Options skills={skills} />
+                <AddSkills />
+            </div>
+        );
     }
 }
 
-// Select the random skill from the skills array
-let selectSkill = () =>{
-    let skillIndex = Math.floor(Math.random() * user.skills.length);
-    let skill = user.skills[skillIndex];
-    alert(skill);
+class Header extends React.Component {
+    render() {
+        return (
+            <div>
+                <h1>{this.props.app_name}</h1>
+            </div>
+        );
+    }
 }
 
-// Remove all the skills 
-let removeAllSkills = () =>{
-    user.skills = [];
-    renderApp();
+
+class Actions extends React.Component {
+
+    handleAction() {
+        alert("Handle Action")
+    }
+
+    render() {
+        return (
+            <div>
+                <button onClick={this.handleAction}>{this.props.action_name}</button>
+            </div>
+        );
+    }
 }
 
-// Render the application function
-let renderApp = () => {
 
-    let template = (
-        <div>   
-            <h1>Skill Application</h1>
-            <p>Name : {user.name} </p>
-            {user.skills.length > 0 && (
-                <div>
-                    <button onClick={selectSkill}>Choose Skill to Improve</button>
-                    <button onClick={removeAllSkills}>Remove All</button>
-                </div>
-            )}
-            <ol>
-                {user.skills.map((skill,index) => (
-                    <li key={index}>{skill}</li>
-                ))}
-            </ol>
-            <form onSubmit={addSkill}>
-                <input type="text" name="skill" />
-                <button type="submit">Add</button>
-            </form>
-        </div>
-    );
+class Options extends React.Component {
 
-    ReactDOM.render(template, appRoot);
+    constructor(props){
+        super(props);
+        this.handleRemoveAll = this.handleRemoveAll.bind(this);
+    }
+
+    handleRemoveAll() {
+        console.log(this.props.skills);
+    }
+
+    render() {
+        return (
+            <div>
+                <button onClick={this.handleRemoveAll}>Remove All</button>
+                {this.props.skills.map((skill, index) => <Option key={index} skill={skill} />)}
+            </div>
+        );
+    }
 }
 
-renderApp();
+class Option extends React.Component {
+    render() {
+        return (
+            <div>
+                <p>{this.props.skill}</p>
+            </div>
+        );
+    }
+}
+
+
+class AddSkills extends React.Component {
+
+    handleSubmitEvent(e) {
+        e.preventDefault();
+
+        let skill = e.target.elements.skill.value.trim();
+
+        if (skill) {
+            alert(skill);
+        }
+    }
+    render() {
+        return (
+            <div>
+                <form onSubmit={this.handleSubmitEvent}>
+                    <input type="text" name="skill" />
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(<SkillApp />, document.getElementById("root"));
