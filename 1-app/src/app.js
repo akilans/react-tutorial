@@ -8,6 +8,7 @@ class SkillApp extends React.Component {
         this.handleAction = this.handleAction.bind(this);
         this.handleRemoveAll = this.handleRemoveAll.bind(this);
         this.handleAddSkill = this.handleAddSkill.bind(this);
+        this.handleRemoveOne = this.handleRemoveOne.bind(this);
     }
 
     handleAction() {
@@ -16,12 +17,25 @@ class SkillApp extends React.Component {
         alert(skill);
     }
 
+    handleRemoveOne(skillToRemove){
+
+        this.setState((prevState) => ({
+            skills: prevState.skills.filter((skill) => {
+                return skillToRemove !== skill;
+            })
+        }))
+    }
+
     handleRemoveAll() {
+
+        this.setState(() => ({ skills: [] }))
+        /*
         this.setState(() => {
             return {
                 skills: []
             }
         })
+        */
     }
 
     handleAddSkill(skill) {
@@ -31,11 +45,14 @@ class SkillApp extends React.Component {
             return `${skill} already exists`;
         }
 
+        this.setState((prevState) => ({ skills: prevState.skills.concat(skill) }))
+        /*
         this.setState((prevState) => {
             return {
                 skills: prevState.skills.concat(skill)
             }
         })
+        */
 
     }
 
@@ -54,6 +71,7 @@ class SkillApp extends React.Component {
                 <Options
                     skills={this.state.skills}
                     handleRemoveAll={this.handleRemoveAll}
+                    handleRemoveOne={this.handleRemoveOne}
                     hasSkills={this.state.skills.length > 0}
                 />
                 <AddSkills handleAddSkill={this.handleAddSkill} />
@@ -91,7 +109,11 @@ const Options = (props) => {
             <button
                 disabled={!props.hasSkills}
                 onClick={props.handleRemoveAll}>Remove All</button>
-            {props.skills.map((skill, index) => <Option key={index} skill={skill} />)}
+            {props.skills.map((skill, index) => <Option 
+                key={index} 
+                skill={skill}
+                handleRemoveOne={props.handleRemoveOne}
+                />)}
         </div>
     );
 }
@@ -101,6 +123,9 @@ const Option = (props) => {
     return (
         <div>
             <p>{props.skill}</p>
+            <button onClick={(e) =>{
+                props.handleRemoveOne(props.skill)
+            }}>Remove</button>
         </div>
     );
 }
@@ -123,11 +148,16 @@ class AddSkills extends React.Component {
         let error = this.props.handleAddSkill(skill);
 
         if (error) {
+            this.setState(() => ({ error }))
+            /*
             this.setState(() => {
                 return {
                     error: error
                 }
             })
+            */
+        } else {
+            this.setState(() => ({ error: "" }))
         }
     }
     render() {
@@ -149,4 +179,4 @@ SkillApp.defaultProps = {
 }
 
 // overriding defaulr props with values
-ReactDOM.render(<SkillApp skills={["php","python"]}/>, document.getElementById("root"));
+ReactDOM.render(<SkillApp skills={["php", "python"]} />, document.getElementById("root"));

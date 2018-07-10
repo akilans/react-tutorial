@@ -22,6 +22,7 @@ var SkillApp = function (_React$Component) {
         _this.handleAction = _this.handleAction.bind(_this);
         _this.handleRemoveAll = _this.handleRemoveAll.bind(_this);
         _this.handleAddSkill = _this.handleAddSkill.bind(_this);
+        _this.handleRemoveOne = _this.handleRemoveOne.bind(_this);
         return _this;
     }
 
@@ -33,13 +34,31 @@ var SkillApp = function (_React$Component) {
             alert(skill);
         }
     }, {
-        key: "handleRemoveAll",
-        value: function handleRemoveAll() {
-            this.setState(function () {
+        key: "handleRemoveOne",
+        value: function handleRemoveOne(skillToRemove) {
+
+            this.setState(function (prevState) {
                 return {
-                    skills: []
+                    skills: prevState.skills.filter(function (skill) {
+                        return skillToRemove !== skill;
+                    })
                 };
             });
+        }
+    }, {
+        key: "handleRemoveAll",
+        value: function handleRemoveAll() {
+
+            this.setState(function () {
+                return { skills: [] };
+            });
+            /*
+            this.setState(() => {
+                return {
+                    skills: []
+                }
+            })
+            */
         }
     }, {
         key: "handleAddSkill",
@@ -51,10 +70,15 @@ var SkillApp = function (_React$Component) {
             }
 
             this.setState(function (prevState) {
+                return { skills: prevState.skills.concat(skill) };
+            });
+            /*
+            this.setState((prevState) => {
                 return {
                     skills: prevState.skills.concat(skill)
-                };
-            });
+                }
+            })
+            */
         }
     }, {
         key: "render",
@@ -74,6 +98,7 @@ var SkillApp = function (_React$Component) {
                 React.createElement(Options, {
                     skills: this.state.skills,
                     handleRemoveAll: this.handleRemoveAll,
+                    handleRemoveOne: this.handleRemoveOne,
                     hasSkills: this.state.skills.length > 0
                 }),
                 React.createElement(AddSkills, { handleAddSkill: this.handleAddSkill })
@@ -127,7 +152,11 @@ var Options = function Options(props) {
             "Remove All"
         ),
         props.skills.map(function (skill, index) {
-            return React.createElement(Option, { key: index, skill: skill });
+            return React.createElement(Option, {
+                key: index,
+                skill: skill,
+                handleRemoveOne: props.handleRemoveOne
+            });
         })
     );
 };
@@ -141,6 +170,13 @@ var Option = function Option(props) {
             "p",
             null,
             props.skill
+        ),
+        React.createElement(
+            "button",
+            { onClick: function onClick(e) {
+                    props.handleRemoveOne(props.skill);
+                } },
+            "Remove"
         )
     );
 };
@@ -172,9 +208,18 @@ var AddSkills = function (_React$Component2) {
 
             if (error) {
                 this.setState(function () {
+                    return { error: error };
+                });
+                /*
+                this.setState(() => {
                     return {
                         error: error
-                    };
+                    }
+                })
+                */
+            } else {
+                this.setState(function () {
+                    return { error: "" };
                 });
             }
         }
