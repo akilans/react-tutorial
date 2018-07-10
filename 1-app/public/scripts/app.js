@@ -11,26 +11,72 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var SkillApp = function (_React$Component) {
     _inherits(SkillApp, _React$Component);
 
-    function SkillApp() {
+    function SkillApp(props) {
         _classCallCheck(this, SkillApp);
 
-        return _possibleConstructorReturn(this, (SkillApp.__proto__ || Object.getPrototypeOf(SkillApp)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (SkillApp.__proto__ || Object.getPrototypeOf(SkillApp)).call(this, props));
+
+        _this.state = {
+            skills: props.skills
+        };
+        _this.handleAction = _this.handleAction.bind(_this);
+        _this.handleRemoveAll = _this.handleRemoveAll.bind(_this);
+        _this.handleAddSkill = _this.handleAddSkill.bind(_this);
+        return _this;
     }
 
     _createClass(SkillApp, [{
+        key: "handleAction",
+        value: function handleAction() {
+            var skillIndex = Math.floor(Math.random() * this.state.skills.length);
+            var skill = this.state.skills[skillIndex];
+            alert(skill);
+        }
+    }, {
+        key: "handleRemoveAll",
+        value: function handleRemoveAll() {
+            this.setState(function () {
+                return {
+                    skills: []
+                };
+            });
+        }
+    }, {
+        key: "handleAddSkill",
+        value: function handleAddSkill(skill) {
+            if (!skill) {
+                return "Enter valid skill";
+            } else if (this.state.skills.indexOf(skill) > -1) {
+                return skill + " already exists";
+            }
+
+            this.setState(function (prevState) {
+                return {
+                    skills: prevState.skills.concat(skill)
+                };
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var app_name = "Skill Application";
             var action_name = "Improve your skills";
-            var skills = ["PHP", "PYTHON", "RUBY"];
 
             return React.createElement(
                 "div",
                 null,
                 React.createElement(Header, { app_name: app_name }),
-                React.createElement(Actions, { action_name: action_name }),
-                React.createElement(Options, { skills: skills }),
-                React.createElement(AddSkills, null)
+                React.createElement(Actions, {
+                    action_name: action_name,
+                    handleAction: this.handleAction,
+                    hasSkills: this.state.skills.length > 0
+                }),
+                React.createElement(Options, {
+                    skills: this.state.skills,
+                    handleRemoveAll: this.handleRemoveAll,
+                    hasSkills: this.state.skills.length > 0
+                }),
+                React.createElement(AddSkills, { handleAddSkill: this.handleAddSkill })
             );
         }
     }]);
@@ -38,137 +84,82 @@ var SkillApp = function (_React$Component) {
     return SkillApp;
 }(React.Component);
 
-var Header = function (_React$Component2) {
-    _inherits(Header, _React$Component2);
+// Stateless component. So class based component not needed
 
-    function Header() {
-        _classCallCheck(this, Header);
 
-        return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
-    }
+var Header = function Header(props) {
+    return React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "h1",
+            null,
+            props.app_name
+        )
+    );
+};
 
-    _createClass(Header, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(
-                    "h1",
-                    null,
-                    this.props.app_name
-                )
-            );
-        }
-    }]);
+// Stateless component. So class based component not needed
+var Actions = function Actions(props) {
+    return React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "button",
+            {
+                disabled: !props.hasSkills,
+                onClick: props.handleAction },
+            props.action_name
+        )
+    );
+};
 
-    return Header;
-}(React.Component);
+// Stateless component. So class based component not needed
+var Options = function Options(props) {
+    return React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "button",
+            {
+                disabled: !props.hasSkills,
+                onClick: props.handleRemoveAll },
+            "Remove All"
+        ),
+        props.skills.map(function (skill, index) {
+            return React.createElement(Option, { key: index, skill: skill });
+        })
+    );
+};
 
-var Actions = function (_React$Component3) {
-    _inherits(Actions, _React$Component3);
+// Stateless component. So class based component not needed
+var Option = function Option(props) {
+    return React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "p",
+            null,
+            props.skill
+        )
+    );
+};
 
-    function Actions() {
-        _classCallCheck(this, Actions);
+// Stateful component. So class based component needed
 
-        return _possibleConstructorReturn(this, (Actions.__proto__ || Object.getPrototypeOf(Actions)).apply(this, arguments));
-    }
+var AddSkills = function (_React$Component2) {
+    _inherits(AddSkills, _React$Component2);
 
-    _createClass(Actions, [{
-        key: "handleAction",
-        value: function handleAction() {
-            alert("Handle Action");
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(
-                    "button",
-                    { onClick: this.handleAction },
-                    this.props.action_name
-                )
-            );
-        }
-    }]);
-
-    return Actions;
-}(React.Component);
-
-var Options = function (_React$Component4) {
-    _inherits(Options, _React$Component4);
-
-    function Options(props) {
-        _classCallCheck(this, Options);
-
-        var _this4 = _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
-
-        _this4.handleRemoveAll = _this4.handleRemoveAll.bind(_this4);
-        return _this4;
-    }
-
-    _createClass(Options, [{
-        key: "handleRemoveAll",
-        value: function handleRemoveAll() {
-            console.log(this.props.skills);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(
-                    "button",
-                    { onClick: this.handleRemoveAll },
-                    "Remove All"
-                ),
-                this.props.skills.map(function (skill, index) {
-                    return React.createElement(Option, { key: index, skill: skill });
-                })
-            );
-        }
-    }]);
-
-    return Options;
-}(React.Component);
-
-var Option = function (_React$Component5) {
-    _inherits(Option, _React$Component5);
-
-    function Option() {
-        _classCallCheck(this, Option);
-
-        return _possibleConstructorReturn(this, (Option.__proto__ || Object.getPrototypeOf(Option)).apply(this, arguments));
-    }
-
-    _createClass(Option, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(
-                    "p",
-                    null,
-                    this.props.skill
-                )
-            );
-        }
-    }]);
-
-    return Option;
-}(React.Component);
-
-var AddSkills = function (_React$Component6) {
-    _inherits(AddSkills, _React$Component6);
-
-    function AddSkills() {
+    function AddSkills(props) {
         _classCallCheck(this, AddSkills);
 
-        return _possibleConstructorReturn(this, (AddSkills.__proto__ || Object.getPrototypeOf(AddSkills)).apply(this, arguments));
+        var _this2 = _possibleConstructorReturn(this, (AddSkills.__proto__ || Object.getPrototypeOf(AddSkills)).call(this, props));
+
+        _this2.state = {
+            error: ""
+        };
+        _this2.handleSubmitEvent = _this2.handleSubmitEvent.bind(_this2);
+        return _this2;
     }
 
     _createClass(AddSkills, [{
@@ -177,9 +168,14 @@ var AddSkills = function (_React$Component6) {
             e.preventDefault();
 
             var skill = e.target.elements.skill.value.trim();
+            var error = this.props.handleAddSkill(skill);
 
-            if (skill) {
-                alert(skill);
+            if (error) {
+                this.setState(function () {
+                    return {
+                        error: error
+                    };
+                });
             }
         }
     }, {
@@ -188,6 +184,11 @@ var AddSkills = function (_React$Component6) {
             return React.createElement(
                 "div",
                 null,
+                React.createElement(
+                    "p",
+                    null,
+                    this.state.error
+                ),
                 React.createElement(
                     "form",
                     { onSubmit: this.handleSubmitEvent },
@@ -205,4 +206,11 @@ var AddSkills = function (_React$Component6) {
     return AddSkills;
 }(React.Component);
 
-ReactDOM.render(React.createElement(SkillApp, null), document.getElementById("root"));
+// Setting default skills in props
+
+
+SkillApp.defaultProps = {
+    skills: []
+
+    // overriding defaulr props with values
+};ReactDOM.render(React.createElement(SkillApp, { skills: ["php", "python"] }), document.getElementById("root"));
